@@ -1,17 +1,28 @@
 package contacts;
 
+import java.io.*;
 import java.util.List;
 import java.util.Scanner;
 
-import static java.lang.System.exit;
-import static java.lang.System.setOut;
+import static java.lang.System.*;
 
 public class PhoneBook {
     private Contacts contacts;
     private Scanner scanner;
+    private File externalFile;
 
     public PhoneBook() {
         contacts = new Contacts();
+        externalFile = new File("contacts");
+    }
+
+    public PhoneBook(String fileName)throws Exception{
+        externalFile = new File(fileName);
+        try(ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(externalFile))){
+            contacts = (Contacts)inputStream.readObject();
+        }catch (FileNotFoundException exception){
+            externalFile = new File("contacts.data");
+        }
     }
 
 
@@ -26,7 +37,7 @@ public class PhoneBook {
 
             System.out.println("[menu]Enter action (add, list, search, count, info, exit): ");
             String action = scanner.nextLine();
-            if (action.equals("exit")) exit(0);
+            if (action.equals("exit")) exit();
 
             switch (action) {
                 case "add":
@@ -203,6 +214,17 @@ public class PhoneBook {
             }
         }
         System.out.println();
+    }
+
+    private void exit(){
+        try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(externalFile))){
+            outputStream.writeObject(contacts);
+            System.exit(0);
+        }catch (IOException e){
+         e.printStackTrace();
+        }
+
+
     }
 
     private void printInfo(int i) {
