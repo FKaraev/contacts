@@ -1,6 +1,7 @@
 package contacts;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Person extends Record {
     private String firstName;
@@ -76,6 +77,8 @@ public class Person extends Record {
             default:
                 break;
         }
+
+        lastModified = LocalDateTime.now();
     }
 
     @Override
